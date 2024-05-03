@@ -121,9 +121,9 @@ public class SecretScanningAlertService
                    && sourceLocation.EndLine == targetLocation.EndLine
                    && sourceLocation.StartColumn == targetLocation.StartColumn
                    && sourceLocation.EndColumn == targetLocation.EndColumn
-                   && sourceLocation.BlobSha == targetLocation.BlobSha
-                   // Technically this will hold, but only if there is not commit rewriting going on, so we need to make this last one optional for now
-                   // && sourceLocation.CommitSha == targetLocation.CommitSha)       
+                   // Technically this will hold, but only if there is not commit rewriting going on, so we need to make this last two optional for now
+                   // && sourceLocation.BlobSha == targetLocation.BlobSha
+                   // && sourceLocation.CommitSha == targetLocation.CommitSha)
                    );
             if (!locationMatch)
             {
