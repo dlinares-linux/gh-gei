@@ -60,6 +60,12 @@ public class SecretScanningAlertService
                 continue;
             }
 
+            if ("hidden_by_config" == target.Alert.Resolution)
+            {
+                _log.LogInformation("   target alert has been closed by GitHub as hidden_by_config.");
+                continue;
+            }
+
             if (dryRun)
             {
                 _log.LogInformation(
