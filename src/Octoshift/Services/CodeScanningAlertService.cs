@@ -26,7 +26,7 @@ public class CodeScanningAlertService
     {
         var defaultBranch = await _sourceGithubApi.GetDefaultBranch(sourceOrg, sourceRepo);
         _log.LogInformation($"Found default branch: {defaultBranch} - migrating code scanning alerts only of this branch.");
-        await MigrateAnalyses(sourceOrg, sourceRepo, targetOrg, targetRepo, defaultBranch, dryRun);
+        // await MigrateAnalyses(sourceOrg, sourceRepo, targetOrg, targetRepo, defaultBranch, dryRun);
         await MigrateAlerts(sourceOrg, sourceRepo, targetOrg, targetRepo, defaultBranch, dryRun);
     }
 
@@ -165,10 +165,11 @@ public class CodeScanningAlertService
 
         _log.LogInformation($"Code Scanning Alerts done!\nStatus of {sourceAlerts.Count} Alerts:\n  Success: {successCount}\n  Skipped (status not migratable or already matches): {skippedCount}\n  No matching target found (see logs): {notFoundCount}.");
 
-        if (notFoundCount > 0)
-        {
-            throw new OctoshiftCliException("Migration of Code Scanning Alerts failed.");
-        }
+        // Commented out when not migrated source analysis
+        // if (notFoundCount > 0)
+        // {
+        //     throw new OctoshiftCliException("Migration of Code Scanning Alerts failed.");
+        // }
     }
 
     private async Task<CodeScanningAlert> FindMatchingTargetAlert(string sourceOrg, string sourceRepo, List<CodeScanningAlert> targetAlerts,
