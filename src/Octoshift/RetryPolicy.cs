@@ -46,7 +46,7 @@ namespace OctoshiftCLI
 
         private AsyncRetryPolicy CreateRetryPolicyForException<TException>() where TException : Exception => Policy
                 .Handle<TException>()
-                .WaitAndRetryAsync(5, retry => retry * TimeSpan.FromMilliseconds(_retryInterval), (Exception ex, TimeSpan ts, Context ctx) =>
+                .WaitAndRetryAsync(0, retry => retry * TimeSpan.FromMilliseconds(_retryInterval), (Exception ex, TimeSpan ts, Context ctx) =>
                 {
                     if (ex is HttpRequestException httpEx)
                     {

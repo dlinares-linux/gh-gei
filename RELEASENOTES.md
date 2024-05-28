@@ -2,3 +2,4 @@
 - Ignored BlobSha differences in secret scanning matching logic.
 - Ignored migration of secret scanning alerts automatically closed by GitHub.
 - Added support for migrating secret scanning alert resolution comments.
+- Added a workaround to add support for migrating secret scanning non-provider patterns alerts.

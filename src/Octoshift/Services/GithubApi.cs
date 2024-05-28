@@ -856,10 +856,28 @@ public class GithubApi
 
     public virtual async Task<IEnumerable<GithubSecretScanningAlert>> GetSecretScanningAlertsForRepository(string org, string repo)
     {
-        var url = $"{_apiUrl}/repos/{org.EscapeDataString()}/{repo.EscapeDataString()}/secret-scanning/alerts?per_page=100";
-        return await _client.GetAllAsync(url)
-            .Select(secretAlert => BuildSecretScanningAlert(secretAlert))
-            .ToListAsync();
+        // Workaround for adding support for migrating non-provider secret scanning alerts
+        // The API "repos/<org>/<repo>/secret-scanning/alerts" doesn't return non-provider alerts
+        // Instead using the API "repos/<org>/<repo>/secret-scanning/alerts/<alertNumber>" to build
+        // a list of alerts by increasing alertNumber one by one until we get an error.
+        // Please also see the HACK done src/Octoshift/RetryPolicy to set 0 retries.
+        var results = new List<GithubSecretScanningAlert>();
+        foreach (var alertNumber in Enumerable.Range(1, 1000))
+        {
+            var url = $"{_apiUrl}/repos/{org.EscapeDataString()}/{repo.EscapeDataString()}/secret-scanning/alerts/{alertNumber}";
+            try
+            {
+                var secretAlert = JObject.Parse(await _client.GetAsync(url));
+                results.Add(BuildSecretScanningAlert(secretAlert));
+
+            }
+            catch (HttpRequestException ex) when (ex.StatusCode == HttpStatusCode.NotFound)
+            {
+                // All alerts retrieved: break and return results
+                break;
+            }
+        }
+        return results;
     }
 
     public virtual async Task<IEnumerable<GithubSecretScanningAlertLocation>> GetSecretScanningAlertsLocations(string org, string repo, int alertNumber)
